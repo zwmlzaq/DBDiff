@@ -21,6 +21,9 @@ class DBSchema {
         $params = ParamsFactory::get();
 
         $diffs = [];
+        
+        $tabletsurfix = 'tablet_';
+	    $tabletIgnoreSurfix = 'tablet_0';
 
         // Collation
         $dbName = $this->manager->getDB('target')->getDatabaseName();
@@ -50,17 +53,26 @@ class DBSchema {
 
         $addedTables = array_diff($sourceTables, $targetTables);
         foreach ($addedTables as $table) {
+            if (strpos($table, $tabletsurfix) != FALSE and strpos($table, $tabletIgnoreSurfix) == FALSE) {
+                continue;
+            }
             $diffs[] = new AddTable($table, $this->manager->getDB('source'));
         }
 
         $commonTables = array_intersect($sourceTables, $targetTables);
         foreach ($commonTables as $table) {
+            if (strpos($table, $tabletsurfix) != FALSE and strpos($table, $tabletIgnoreSurfix) == FALSE) {
+                continue;
+            }
             $tableDiff = $tableSchema->getDiff($table);
             $diffs = array_merge($diffs, $tableDiff);
         }
 
         $deletedTables = array_diff($targetTables, $sourceTables);
         foreach ($deletedTables as $table) {
+            if (strpos($table, $tabletsurfix) != FALSE and strpos($table, $tabletIgnoreSurfix) == FALSE) {
+                continue;
+            }
             $diffs[] = new DropTable($table, $this->manager->getDB('target'));
         }
 
