@@ -37,6 +37,7 @@ class DBManager {
         try {
             $this->capsule->getConnection($res);
         } catch(\Exception $e) {
+            var_dump($e);
             throw new DBException("Can't connect to target database");
         }
         if (!empty($input['table'])) {
